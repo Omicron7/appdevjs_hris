@@ -87,6 +87,10 @@
                         var $this = $(this);
                         var rel = new hris.Relationship();
                         rel.loadFromDOM($this);
+                        // If this is a newly created model, then objA_id of the relationship hasn't been set yet
+                        if (!rel.objA_id) {
+                            rel.objA_id = instance.object_id;
+                        }
                         if ($this.hasClass('rel-delete-row')) {
                             // Destroy
                             callbacks.push(rel.destroy());

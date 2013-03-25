@@ -42,11 +42,11 @@ var L = function(key) { return AD.Lang.Labels.getLabelHTML(key); };
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label" for="pkey">Relationships</label>
+		<label class="control-label" for="pkey"><%== L( '[details.object.label.relationships]' ) %></label>
 		<div class="controls">
 			<div class="btn-group">
 				<button class="btn dropdown-toggle" data-toggle="dropdown">
-					Add
+					<%== L( '[details.object.relationships.add_action]' ) %>
 					<span class="caret"></span>
 				</button>
 				<ul class="dropdown-menu" id="add-relationship-dropdown"></ul>
@@ -56,8 +56,8 @@ var L = function(key) { return AD.Lang.Labels.getLabelHTML(key); };
 	<table id="object-relationships" class="table">
 		<thead>
 			<tr>
-				<th>Type</th>
-				<th>Label</th>
+				<th><%== L( '[details.object.relationships.header.type]' ) %></th>
+				<th><%== L( '[details.object.relationships.header.label]' ) %></th>
 				<th></th>
 			</tr>
 		</thead>

@@ -191,3 +191,33 @@ msgstr "[zh-hans]:Label"
 msgid "Type"
 msgstr "[zh-hans]:Type"
 
+#. path: /page/hris/dbadmin
+#. code: zh-hans
+#. key: [details.object.relationships.add_action]
+msgid "Add"
+msgstr "Add"
+
+#. path: /page/hris/dbadmin
+#. code: zh-hans
+#. key: [details.object.relationships.header.type]
+msgid "(translators ignore this tag:[31]) Type"
+msgstr "[zh-hans]:Type"
+
+#. path: /page/hris/dbadmin
+#. code: zh-hans
+#. key: [details.object.relationships.header.label]
+msgid "(translators ignore this tag:[32]) Label"
+msgstr "[zh-hans]:Label"
+
+#. path: /page/hris/dbadmin
+#. code: zh-hans
+#. key: [details.object.relationships.column_name]
+msgid "Column name"
+msgstr "[zh-hans]:Column name"
+
+#. path: /page/hris/dbadmin
+#. code: zh-hans
+#. key: [details.object.label.relationships]
+msgid "Relationships"
+msgstr "[zh-hans]:Relationships"
+
