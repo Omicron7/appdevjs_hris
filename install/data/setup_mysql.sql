@@ -166,7 +166,8 @@ CREATE TABLE `hris2_object` (
   `object_pkey` text NOT NULL,
   `object_table` text NOT NULL,
   PRIMARY KEY (`object_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -305,8 +306,14 @@ CREATE TABLE `hris2_relationship` (
   `objA_id` int(11) unsigned NOT NULL,
   `objB_id` int(11) unsigned NOT NULL,
   `relationship_type` varchar(25) NOT NULL DEFAULT '',
-  PRIMARY KEY (`relationship_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`relationship_id`),
+  CONSTRAINT fk_rship_objA
+        FOREIGN KEY (objA_id) 
+        REFERENCES hris2_object (object_id) ON DELETE CASCADE,
+  CONSTRAINT fk_rship_objB 
+        FOREIGN KEY (objB_id) 
+        REFERENCES hris2_object (object_id) ON DELETE CASCADE
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -315,7 +322,6 @@ CREATE TABLE `hris2_relationship` (
 
 LOCK TABLES `hris2_relationship` WRITE;
 /*!40000 ALTER TABLE `hris2_relationship` DISABLE KEYS */;
-INSERT INTO `hris2_relationship` VALUES (1,1,2,'has_many'),(2,2,1,'belongs_to');
 /*!40000 ALTER TABLE `hris2_relationship` ENABLE KEYS */;
 UNLOCK TABLES;
 

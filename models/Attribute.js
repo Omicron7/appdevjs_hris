@@ -7,10 +7,11 @@
 (function () {
     // Pull AppDev from the global scope on NodeJS and browser and load the AppDev CommonJS module on Titanium
     var AD = (typeof AppDev === "undefined" ? (typeof global === "undefined" ? require('AppDev') : global.AD) : AppDev);
-    
+    var $ = AD.jQuery;
+
     // On Titanium and NodeJS, the full model definition is needed
     var extendedDefinition = typeof Titanium !== 'undefined' || typeof process !== 'undefined';
-    
+
     var attr = {
         // Shared model attributes
         _adModule:'hris',
@@ -18,19 +19,23 @@
         id:'attribute_id',
         labelKey:'attribute_label',
         _isMultilingual:true,
-        _relationships:{
-            belongs_to:[], // array of Model Names: ['Attributeset', 'site.Viewer', ... ]
-            has_many:[]    // array of Model Names
-            },
         //connectionType:'server', // optional field
-        cache:false
+        cache:false,
+        existing: function(params) {
+
+            var dfd = $.Deferred();
+
+            dfd.resolve(false);
+
+            return dfd;
+          }
     };
-    
+
     if (extendedDefinition) {
         // Extended model attributes
         AD.jQuery.extend(attr, {
             type:'multilingual',  // 'single' | 'multilingual'
-            dbName:'live_db',
+//            dbName:'live_db',
             tables:{
                 data:'hris2_attributes',
                 trans:'hris2_attributes_trans'
@@ -47,27 +52,27 @@
 
                 },
                 trans: {
-                  id:"int(11) unsigned",
+                  attributetrans_id:"int(11) unsigned",
                   attribute_id:"int(11)",
                   language_code:"varchar(10)",
                   attribute_label:"text",
                   attribute_question:"text"
 
-                  
+
                 }
             },
             primaryKey:'attribute_id',
-            multilingualFields: ['id', 'attribute_label', 'attribute_question']
+            multilingualFields: ['attribute_label', 'attribute_question']
         });
     }
-    
-    
+
+
     var Model = AD.Model.extend("hris.Attribute",
     attr,
     {
         // define instance methods here.
     });
-    
+
     if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         // This is a CommonJS module, so return the model
         module.exports = Model;
