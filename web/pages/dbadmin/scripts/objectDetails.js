@@ -41,7 +41,11 @@
                 this.selectedModel = null;
                 this.addForm = null;
                 this.relationshipMgr = new hris.Relationship();
-                
+
+                // For flash messages (alerts)
+                this.alertClass = null;
+                this.alertMessage = null;
+
                 // insert our DOM elements
                 this.insertDOM();
 
@@ -52,7 +56,39 @@
                     error: '.text-error',
                     submit: 'button.submit',
                     cancel: 'button.cancel',
-                    onSubmit: this.onSubmit,
+                    onSubmit: function( model ) {
+                        model.save( function(instance, data) {
+                            // Save Relationships
+                            var callbacks = [];
+                            $('#object-relationships tbody tr:visible').each( function(i, el) {
+                                var $this = $(this);
+                                var rel = new hris.Relationship();
+                                rel.loadFromDOM($this);
+                                // If this is a newly created model, then objA_id of the relationship hasn't been set yet
+                                if (!rel.objA_id) {
+                                    rel.objA_id = instance.object_id;
+                                }
+                                if ($this.hasClass('rel-delete-row')) {
+                                    // Destroy
+                                    callbacks.push(rel.destroy());
+                                } else {
+                                    // Update/Create
+                                    callbacks.push(rel.save());
+                                }
+                            });
+                            $.when(callbacks).then(function(list) {
+                                // Done updating relationships
+                            });
+
+                            self.alertClass = 'alert-success';
+                            self.alertMessage = 'Saved';
+                            AD.Comm.Notification.publish('dbadmin.object.changed', instance);
+                        }, function() {
+                            self.alertClass = 'alert-error';
+                            self.alertMessage = 'Failed to Save';
+                        });
+                        return false;
+                    },
                     onCancel: function() {
                         self.ADForm.clear();
                         self.element.hide();
@@ -78,40 +114,9 @@
                 return true;
             },
 
-            // Called when the 'Submit' button is clicked
-            onSubmit: function( model ) {
-                model.save( function(instance, data) {
-                    // Save Relationships
-                    var callbacks = [];
-                    $('#object-relationships tbody tr:visible').each( function(i, el) {
-                        var $this = $(this);
-                        var rel = new hris.Relationship();
-                        rel.loadFromDOM($this);
-                        // If this is a newly created model, then objA_id of the relationship hasn't been set yet
-                        if (!rel.objA_id) {
-                            rel.objA_id = instance.object_id;
-                        }
-                        if ($this.hasClass('rel-delete-row')) {
-                            // Destroy
-                            callbacks.push(rel.destroy());
-                        } else {
-                            // Update/Create
-                            callbacks.push(rel.save());
-                        }
-                    });
-                    $.when(callbacks).then(function(list) {
-                        console.log("Relationships done updating");
-                    });
-
-                    AD.Comm.Notification.publish('dbadmin.object.changed', instance);
-                }, function() {
-                    AD.alert('Failed to save Object');
-                });
-                return false;
-            },
-
             refreshData: function( model ) {
                 this.selectedModel = model;
+                this.updateFlashAlert();
                 this.ADForm.setModel( model );
                 this.updateRelationshipDropdown();
 
@@ -173,9 +178,25 @@
                 // Bind data
                 rel.bindToForm(newRow);
                 $('.rel-objB-key', newRow).data('ad-model', rel.objB);
-
                 $('select', newRow).selectpicker();
                 this.toggleShowAdvanced($('select', newRow));
+            },
+
+            // Updates the flash-alert div
+            updateFlashAlert: function() {
+                var $div = $('.alert', this.element);
+                $div.removeClass('alert-error alert-success alert-info');
+                if (this.alertMessage) {
+                    $div.addClass(this.alertClass);
+                    $div.html(this.alertMessage);
+                    $div.show();
+                } else {
+                    $div.hide();
+                }
+
+                // Remove the message, since it has been displayed
+                this.alertClass = null;
+                this.alertMessage = null;
             },
 
             '#object-object_key change': function(el, ev) {

@@ -41,7 +41,11 @@
 
                 this.selectedModel = null;
                 this.addForm = null;
-                
+
+                // For flash messages (alerts)
+                this.alertClass = null;
+                this.alertMessage = null;
+
                 // insert our DOM elements
                 this.insertDOM();
 
@@ -52,7 +56,17 @@
                     error: '.text-error',
                     submit: 'button.submit',
                     cancel: 'button.cancel',
-                    onSubmit: this.onSubmit,
+                    onSubmit: function( model ) {
+                        model.save( function(instance, data) {
+                            self.alertClass = 'alert-success';
+                            self.alertMessage = 'Saved';
+                            AD.Comm.Notification.publish('dbadmin.attribute.changed', instance);
+                        }, function() {
+                            self.alertClass = 'alert-error';
+                            self.alertMessage = 'Failed to Save';
+                        });
+                        return false;
+                    },
                     onCancel: function() {
                         self.ADForm.clear();
                         self.element.hide();
@@ -80,24 +94,32 @@
                 this.addForm = $( 'form', this.element );
                 this.element.find( 'select' ).selectpicker();
             },
-            
-            isValid: function( data ) {
-                return true;
+
+            // Updates the flash-alert div
+            updateFlashAlert: function() {
+                var $div = $('.alert', this.element);
+                $div.removeClass('alert-error alert-success alert-info');
+                if (this.alertMessage) {
+                    $div.addClass(this.alertClass);
+                    $div.html(this.alertMessage);
+                    $div.show();
+                } else {
+                    $div.hide();
+                }
+
+                // Remove the message, since it has been displayed
+                this.alertClass = null;
+                this.alertMessage = null;
             },
 
-            // Called when the 'Submit' button is clicked
-            onSubmit: function( model ) {
-                model.save( function(instance, data) {
-                    AD.Comm.Notification.publish('dbadmin.attribute.changed', instance);
-                }, function() {
-                    AD.alert('Failed to Save');
-                });
-                return false;
+            isValid: function( data ) {
+                return true;
             },
 
             refreshData: function( model ) {
                 this.selectedModel = model;
                 this.ADForm.setModel( model );
+                this.updateFlashAlert();
             },
 
             // Show the view for editing the selected item
