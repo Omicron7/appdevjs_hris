@@ -79,7 +79,12 @@ var verifyParams = function (req, res, next) {
     // Establish basic file properties
     for (var idx in req.files) {
         
-        var file = req.files[idx];
+        var file;
+        if (req.files.files) {
+            file = req.files.files[0];
+        } else {
+            file = req.files[idx];
+        }
         req.hrisUserfile = {
             name: file.name,
             srcPath: file.path,
