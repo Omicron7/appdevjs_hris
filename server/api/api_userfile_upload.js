@@ -157,13 +157,14 @@ var processFile = function(req, res, next) {
         
         // Finish writing to the destination file
         req.hrisUserfile.writeStream.end(function() {
-            var finalPath = userfilesDir
-                + '/'
+            var finalName = ''
                 + req.hrisUserfile.name
                 + '-'
                 + req.hrisUserfile.checksum
                 + '-'
                 + req.hrisUserfile.date.valueOf();
+
+            var finalPath = userfilesDir + '/' + finalName;
         
             // Rename the file now that we know the checksum.
             fs.rename(
@@ -173,7 +174,8 @@ var processFile = function(req, res, next) {
                     log(req, 'Renamed file to [' + finalPath + ']');
                 
                     // Update the destPath
-                    req.hrisUserfile.destPath = finalPath;
+                    // (we only save the basename)
+                    req.hrisUserfile.destPath = finalName;
                     
                     // Delete the original temp file
                     fs.unlink(req.hrisUserfile.srcPath, function() {

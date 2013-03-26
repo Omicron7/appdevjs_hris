@@ -14,6 +14,7 @@ var log = AD.Util.Log;
 var logDump = AD.Util.LogDump;
 var $ = AD.jQuery;
 var permissions = require('../data/UserfilePermissions.js');
+var userfilesDir = __appdevPath + '/modules/hris/userfiles';
 
 var ErrorMSG = null;
 
@@ -121,7 +122,11 @@ var sendFile = function(req, res, next) {
     log(req, "Sending file [" + req.hrisUserfile.model.userfile_name + "]");
 
     // Incrementally send chunks of the file as it is being read from disk
-    var stream = fs.ReadStream(req.hrisUserfile.model.userfile_path);
+    var stream = fs.ReadStream(
+        userfilesDir
+        + '/'
+        + req.hrisUserfile.model.userfile_path
+    );
     stream.on('data', function(data) {
         res.write(data);
     });
