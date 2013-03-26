@@ -37,7 +37,9 @@
                   userfile_name:"text",
                   userfile_path:"text",
                   userfile_mimetype:"varchar(32)",
-                  userfile_date:"date"
+                  userfile_date:"date",
+                  attribute_id:"int(11)",
+                  viewer_guid:"text"
 
             },
             primaryKey:'userfile_id'

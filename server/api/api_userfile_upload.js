@@ -7,6 +7,10 @@
  * @apprad resource:userfile // @appradend (please leave)
  * @apprad action:upload // @appradend (please leave)
  * @apprad url: // @appradend
+ *
+ *
+ * POST /hris/userfile/upload?attribute_id=[id]
+ *
  */
 
 
@@ -73,7 +77,6 @@ var verifyParams = function (req, res, next) {
     }
     
     // Establish basic file properties
-    // (we only support single file uploads)
     for (var idx in req.files) {
         
         var file = req.files[idx];
@@ -81,10 +84,13 @@ var verifyParams = function (req, res, next) {
             name: file.name,
             srcPath: file.path,
             mimetype: file.type,
+            attribute_id: req.param('attribute_id'),
             checksum: '',
             destPath: '',
             writeStream: null,
         }
+
+        // we only support single file uploads
         break;
 
     }
@@ -181,12 +187,17 @@ var processFile = function(req, res, next) {
 
 
 var createEntry = function(req, res, next) {
+    
+    // guid will not be available if authentication is disabled
+    var guid = req.aRAD.viewer_globlUserID || null;
 
     AD.Model.List['hris.Userfile'].create({
         userfile_name: req.hrisUserfile.name,
         userfile_path: req.hrisUserfile.destPath,
         userfile_mimetype: req.hrisUserfile.mimetype,
-        userfile_date: AD.Util.Timestamp()
+        userfile_date: AD.Util.Timestamp(),
+        attribute_id: req.hrisUserfile.attribute_id,
+        viewer_guid: guid
     })
     .then(function(model) {
         log(req, 'Created hris2_userfile entry');
