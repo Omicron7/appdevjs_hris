@@ -98,9 +98,6 @@
             refreshData: function( model ) {
                 this.selectedModel = model;
                 this.ADForm.setModel( model );
-
-                // Disable submit button until the user changes something
-                this.element.find('button.submit').prop('disabled', true);
             },
 
             // Show the view for editing the selected item
@@ -143,12 +140,6 @@
             'dbadmin.attribute.item.deleted subscribe': function( msg, model ) {
                 this.element.hide();
             },
-
-            // Enable the "Save" button when something changes
-            ':input change': function(el, ev) {
-                $('button.submit').prop('disabled', false);
-            },
-
             // Called when the datatype is changed
             'select change': function(el, ev) {
                 this.showOrHideMETA();

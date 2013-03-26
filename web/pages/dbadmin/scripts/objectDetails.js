@@ -137,9 +137,6 @@
                         }
                     });
                 }
-
-                // Disable submit button until the user changes something
-                this.element.find('button.submit').prop('disabled', true);
             },
 
             updateRelationshipDropdown: function() {
@@ -230,7 +227,6 @@
                 rel.objB_id = model.object_id;
                 rel.objB = model;
                 this.addRelationshipRow(rel);
-                this.element.find('button.submit').prop('disabled', false);
 
                 ev.preventDefault();
             },
@@ -267,13 +263,7 @@
             // When the "Delete" button is clicked
             '.rel-delete-btn click': function(el, ev) {
                 el.closest('tr').toggleClass('rel-delete-row');
-                this.element.find('button.submit').prop('disabled', false);
                 ev.preventDefault();
-            },
-
-            // Enable the "Save" button when something changes
-            ':input change': function(el, ev) {
-                this.element.find('button.submit').prop('disabled', false);
             },
 
             'dbadmin.object.item.deleted subscribe': function( msg, model ) {
